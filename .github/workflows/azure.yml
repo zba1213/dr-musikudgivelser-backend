@@ -1,0 +1,44 @@
+name: Test og publicér API
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  api:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Kør repository-tests
+        run: dotnet test MusicRecords.sln --configuration Release
+      - name: Byg pakken til Azure
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master' && vars.AZURE_WEBAPP_NAME != ''
+        run: dotnet publish MusicRecords.Api/MusicRecords.Api.csproj --configuration Release --output publish
+      - name: Publicér til Azure App Service
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master' && vars.AZURE_WEBAPP_NAME != ''
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: publish
+      - name: Afprøv det publicerede endpoint
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master' && vars.AZURE_WEBAPP_NAME != ''
+        env:
+          API_BASE_URL: ${{ vars.API_BASE_URL }}
+        shell: pwsh
+        run: |
+          $url = $env:API_BASE_URL.TrimEnd('/') + '/api/records'
+          $response = Invoke-WebRequest -Uri $url -MaximumRetryCount 5 -RetryIntervalSec 5
+          $records = ConvertFrom-Json -InputObject $response.Content -NoEnumerate
+          if ($response.StatusCode -ne 200 -or $records -isnot [array] -or $records.Count -ne 3) {
+            throw "Forventede HTTP 200 og tre musikudgivelser fra $url"
+          }

@@ -1,0 +1,53 @@
+{
+  "info": {
+    "name": "Music Records",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5080"
+    }
+  ],
+  "item": [
+    {
+      "name": "GET alle musikudgivelser",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/records"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status er 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Svaret er en JSON-liste\", function () {",
+              "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/^application\\/json\\b/i);",
+              "    pm.expect(pm.response.json()).to.be.an(\"array\");",
+              "});",
+              "",
+              "pm.test(\"Eksempeludgivelserne har de forventede felter og typer\", function () {",
+              "    const records = pm.response.json();",
+              "    pm.expect(records).to.be.an(\"array\").with.lengthOf(3);",
+              "    for (const record of records) {",
+              "        pm.expect(record).to.have.all.keys(\"id\", \"title\", \"artist\", \"duration\", \"publicationYear\");",
+              "        pm.expect(record.title).to.be.a(\"string\");",
+              "        pm.expect(record.artist).to.be.a(\"string\");",
+              "        pm.expect(Number.isInteger(record.id)).to.equal(true);",
+              "        pm.expect(Number.isInteger(record.duration)).to.equal(true);",
+              "        pm.expect(Number.isInteger(record.publicationYear)).to.equal(true);",
+              "    }",
+              "    pm.expect(records.map(record => record.id)).to.have.members([1, 2, 3]);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
