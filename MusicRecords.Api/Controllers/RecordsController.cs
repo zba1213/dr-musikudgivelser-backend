@@ -9,8 +9,9 @@ public class RecordsController(MusicRecordRepository repository) : ControllerBas
     [HttpGet]
     [Produces("application/json")]
     [ProducesResponseType(typeof(IReadOnlyList<MusicRecord>), StatusCodes.Status200OK)]
-    public ActionResult<IReadOnlyList<MusicRecord>> GetAll()
+    public ActionResult<IReadOnlyList<MusicRecord>> GetAll(
+        [FromQuery] string? title = null, [FromQuery] string? artist = null)
     {
-        return Ok(repository.GetAll());
+        return Ok(repository.GetAll(title, artist));
     }
 }

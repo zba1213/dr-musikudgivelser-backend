@@ -48,6 +48,141 @@
           }
         }
       ]
+    },
+    {
+      "name": "Titel",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/records?title=%20mAL%20"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status er 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Svaret indeholder præcis de forventede udgivelser\", function () {",
+              "    const records = pm.response.json();",
+              "    pm.expect(records).to.be.an(\"array\");",
+              "    const actual = records.map(record => [record.id, record.title, record.artist]);",
+              "    pm.expect(actual).to.deep.have.members([[3,\"Malibu\",\"Anderson .Paak\"]]);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Kunstner",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/records?artist=%20nEp%20"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status er 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Svaret indeholder præcis de forventede udgivelser\", function () {",
+              "    const records = pm.response.json();",
+              "    pm.expect(records).to.be.an(\"array\");",
+              "    const actual = records.map(record => [record.id, record.title, record.artist]);",
+              "    pm.expect(actual).to.deep.have.members([[2,\"Hjertestarter\",\"Nephew\"]]);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Titel og kunstner",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/records?title=mal&artist=paak"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status er 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Svaret indeholder præcis de forventede udgivelser\", function () {",
+              "    const records = pm.response.json();",
+              "    pm.expect(records).to.be.an(\"array\");",
+              "    const actual = records.map(record => [record.id, record.title, record.artist]);",
+              "    pm.expect(actual).to.deep.have.members([[3,\"Malibu\",\"Anderson .Paak\"]]);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ingen match med begge filtre",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/records?title=mal&artist=nep"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status er 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Svaret indeholder præcis de forventede udgivelser\", function () {",
+              "    const records = pm.response.json();",
+              "    pm.expect(records).to.be.an(\"array\");",
+              "    const actual = records.map(record => [record.id, record.title, record.artist]);",
+              "    pm.expect(actual).to.deep.have.members([]);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tomme filtre",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/records?title=&artist=%20%20"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status er 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Svaret indeholder præcis de forventede udgivelser\", function () {",
+              "    const records = pm.response.json();",
+              "    pm.expect(records).to.be.an(\"array\");",
+              "    const actual = records.map(record => [record.id, record.title, record.artist]);",
+              "    pm.expect(actual).to.deep.have.members([[1,\"Hej Matematik\",\"Hej Matematik\"],[2,\"Hjertestarter\",\"Nephew\"],[3,\"Malibu\",\"Anderson .Paak\"]]);",
+              "});"
+            ]
+          }
+        }
+      ]
     }
   ]
 }

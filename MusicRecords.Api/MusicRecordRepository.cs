@@ -17,8 +17,22 @@ public class MusicRecordRepository
         this.records = records.ToList();
     }
 
-    public IReadOnlyList<MusicRecord> GetAll()
+    public IReadOnlyList<MusicRecord> GetAll(string? title = null, string? artist = null)
     {
-        return records.AsReadOnly();
+        title = title?.Trim();
+        artist = artist?.Trim();
+        IEnumerable<MusicRecord> matches = records;
+
+        if (!string.IsNullOrEmpty(title))
+        {
+            matches = matches.Where(record => record.Title.Contains(title, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrEmpty(artist))
+        {
+            matches = matches.Where(record => record.Artist.Contains(artist, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return matches.ToList().AsReadOnly();
     }
 }

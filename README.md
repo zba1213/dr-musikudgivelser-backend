@@ -9,6 +9,8 @@ dotnet test MusicRecords.sln
 
 Kør de to kommandoer i hver sin terminal, hvis API'et skal blive ved med at køre. Åbn [Swagger](http://localhost:5080/swagger) eller [GET /api/records](http://localhost:5080/api/records). Swagger viser HTTP 200 og svarmodellen for JSON-listen.
 
+Brug `GET /api/records?title=mal&artist=paak` for at finde *Malibu*. Begge query-parametre er valgfrie og kan afprøves i Swagger. Ved to aktive filtre skal begge matche. Søgningen ser bort fra store og små bogstaver og mellemrum omkring filteret. Et søgekald uden match returnerer `200 OK` og `[]`.
+
 Importér `postman/MusicRecords.postman_collection.json` i Postman. Sæt collection-variablen `baseUrl` til API'ets adresse uden skråstreg til sidst. Tryk **Send** på **GET alle musikudgivelser** og se **Test Results**. Brug Azure-adressen efter publicering.
 
 ## Azure via GitHub Actions
