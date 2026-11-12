@@ -31,6 +31,27 @@ public class MusicRecordRepositoryTests
         Assert.IsEmpty(repository.GetAll());
     }
 
+    [TestMethod]
+    [DataRow("  fTe  ", null, new int[] { 10, 20 })]
+    [DataRow(null, "  nOr  ", new int[] { 10, 30 })]
+    [DataRow("fTe", "nOr", new int[] { 10 })]
+    [DataRow("Aften", "Øst", new int[] { })]
+    [DataRow("Udgivelsen findes ikke", null, new int[] { })]
+    [DataRow(null, "Kunstneren findes ikke", new int[] { })]
+    [DataRow("", "   ", new int[] { 10, 20, 30 })]
+    public void GetAll_FiltersByTitleAndArtist(string? title, string? artist, int[] expectedIds)
+    {
+        var repository = new MusicRecordRepository([
+            new() { Id = 10, Title = "Aften", Artist = "Nord" },
+            new() { Id = 20, Title = "Efter Aften", Artist = "Syd" },
+            new() { Id = 30, Title = "Morgen", Artist = "Nordlys" }
+        ]);
+
+        var records = repository.GetAll(title, artist);
+
+        CollectionAssert.AreEqual(expectedIds, records.Select(record => record.Id).ToArray());
+    }
+
     private static void AssertRecord(MusicRecord record, int id, string title, string artist, int duration, int year)
     {
         Assert.AreEqual(id, record.Id);
